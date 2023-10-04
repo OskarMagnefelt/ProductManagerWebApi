@@ -63,6 +63,19 @@ public class ProductsController : ControllerBase
         return Ok(product);
     }
 
+    [HttpGet("search")]
+        public IActionResult SearchProductBySKU(string sku)
+        {
+            var product = context.Product.SingleOrDefault(p => p.SKU == sku);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(product);
+        }
+
     private readonly ApplicationDbContext context;
 
     public ProductsController(ApplicationDbContext context)
