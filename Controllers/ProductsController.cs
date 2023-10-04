@@ -42,6 +42,27 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPut("{sku}")]
+    public IActionResult UpdateProduct(string sku, Product updatedProduct)
+    {
+        var product = context.Product.SingleOrDefault(p => p.SKU == sku);
+
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        // Update the properties of the existing product with the new values
+        product.Name = updatedProduct.Name;
+        product.Description = updatedProduct.Description;
+        product.Image = updatedProduct.Image;
+        product.Price = updatedProduct.Price;
+
+        context.SaveChanges();
+
+        return Ok(product);
+    }
+
     private readonly ApplicationDbContext context;
 
     public ProductsController(ApplicationDbContext context)
