@@ -26,6 +26,22 @@ public class ProductsController : ControllerBase
         return Created("", product);
     }
 
+    [HttpDelete("{sku}")]
+    public IActionResult DeleteProduct(string sku)
+    {
+        var product = context.Product.SingleOrDefault(p => p.SKU == sku);
+
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        context.Product.Remove(product);
+        context.SaveChanges();
+
+        return NoContent();
+    }
+
     private readonly ApplicationDbContext context;
 
     public ProductsController(ApplicationDbContext context)
