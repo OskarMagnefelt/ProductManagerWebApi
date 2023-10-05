@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProductManager.Data;
-using ProductManager.Domain;
-using System.Linq;
 using static System.Console;
 
 namespace ProductManager.Controllers
@@ -21,31 +19,44 @@ namespace ProductManager.Controllers
         [HttpGet]
         public IActionResult GetProductCategories()
         {
-            var categories = context.ProductCategory.ToList();
-            return Ok(categories);
+            try
+            {
+                var categoriesWithProducts = context.Category
+                    .Include(c => c.Products) // Include the related products
+                    .Select(c => new CategoryWithProductsDto
+                    {
+                        CategoryId = c.Id,
+                        CategoryName = c.Name,
+                        Products = c.Products.Select(p => new ProductDto
+                        {
+                            ProductId = p.Id,
+                            ProductName = p.Name
+                        }).ToList()
+                    })
+                    .ToList();
+
+                return Ok(categoriesWithProducts);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
-        public class AddProductToCategoryRequest
-        {
-            public int CategoryId { get; set; }
-            public int ProductId { get; set; }
-        }
 
 
         [HttpPost("add")]
         public IActionResult AddProductToCategory([FromBody] AddProductToCategoryRequest request)
         {
-            // Find the category by its ID
             var category = context.Category.Find(request.CategoryId);
 
             if (category == null)
             {
-                // Add debugging output
                 Console.WriteLine($"Category with ID {request.CategoryId} not found.");
                 return NotFound("Category not found.");
             }
 
-            // Find the product by its ID
             var product = context.Product.Find(request.ProductId);
 
             if (product == null)
@@ -53,26 +64,21 @@ namespace ProductManager.Controllers
                 return NotFound("Product not found.");
             }
 
-            // Check if the product is already associated with the category
-            var existingAssociation = context.ProductCategory
-                .SingleOrDefault(pc => pc.CategoryId == request.CategoryId && pc.ProductId == request.ProductId);
-
-            if (existingAssociation != null)
+            try
             {
-                return Conflict("Product is already associated with the category.");
+                context.Product.Attach(product);
+
+                product.Categories.Add(category);
+
+                context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                WriteLine("Produkt redan tillagd");
+                return Conflict("Produkt redan tillagd");
             }
 
-            // Create a new ProductCategory entity to represent the association
-            var productCategory = new ProductCategory
-            {
-                CategoryId = request.CategoryId,
-                ProductId = request.ProductId
-            };
-
-            context.ProductCategory.Add(productCategory);
-            context.SaveChanges();
-
-            return Created("", productCategory);
+            return Created("", request);
         }
 
     }

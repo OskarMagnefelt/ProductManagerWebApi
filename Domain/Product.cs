@@ -9,21 +9,23 @@ public class Product
     public int Id { get; set; }
 
     [MaxLength(50)]
-    public required string Name { get; set; }
+    [Required]
+    public string Name { get; set; }
 
     [MaxLength(20)]
-    public required string SKU { get; set; }
+    [Required]
+    public string SKU { get; set; }
 
     [MaxLength(50)]
-    public required string Description { get; set; }
+    [Required]
+    public string Description { get; set; }
 
     [MaxLength(50)]
-    public required string Image { get; set; }
+    [Required]
+    public string Image { get; set; }
 
-    [MaxLength(50)]
-    public required string Price { get; set; }
+    [Required]
+    public decimal Price { get; set; }
 
-    public ICollection<ProductCategory>
-    ProductCategories
-    { get; set; } = new List<ProductCategory>();
+    public ICollection<Category> Categories { get; set; } = new List<Category>();
 }
