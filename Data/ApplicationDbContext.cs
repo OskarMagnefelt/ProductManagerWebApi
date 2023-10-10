@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace ProductManager.Data;
-using ProductManager.Domain;
+using ProductManager.Entities;
 
 public class ApplicationDbContext : DbContext
 {

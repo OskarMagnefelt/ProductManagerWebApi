@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace ProductManager.Domain;
+namespace ProductManager.Entities;
 
 [Index(nameof(SKU), IsUnique = true)]
 public class Product
@@ -9,7 +9,7 @@ public class Product
     public int Id { get; set; }
 
     [MaxLength(50)]
-    [Required]
+    // [Required]
     public string Name { get; set; }
 
     [MaxLength(20)]

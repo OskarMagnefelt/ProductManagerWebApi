@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProductManager.Data;
-using ProductManager.Domain;
+using ProductManager.Entities;
 
 namespace ProductManager.Controllers;
 
@@ -8,6 +8,13 @@ namespace ProductManager.Controllers;
 [Route("[controller]")]
 public class ProductsController : ControllerBase
 {
+    /// <summary>
+    /// Retrieves a list of all products.
+    /// </summary>
+    /// <remarks>
+    /// This endpoint allows you to retrieve a list of all products available in the system.
+    /// </remarks>
+    /// <returns>An IEnumerable of products.</returns>
     [HttpGet]
     public IEnumerable<Product> GetProducts()
     {
@@ -16,10 +23,22 @@ public class ProductsController : ControllerBase
         return products;
     }
 
-    [HttpGet("name={name}")]
-    public IActionResult GetProductsByName(string name)
+    /// <summary>
+    /// Retrieves products with a specific name.
+    /// </summary>
+    /// <remarks>
+    /// This endpoint allows you to search for products with a given name.
+    /// </remarks>
+    /// <param name="name">The name to search for.</param>
+    /// <returns>
+    /// If products with the specified name are found, it returns an OK response with the list of matching products.
+    /// If no products are found, it returns a NotFound response.
+    /// </returns>
+    /// <response code="200">Returns a list of products with the specified name.</response>
+    /// <response code="404">If no products are found with the specified name.</response>
+    [HttpGet("search")]
+    public IActionResult GetProductsByName([FromQuery] string name)
     {
-        // Retrieve products with the given name
         var productsWithName = context.Product
             .Where(p => p.Name == name)
             .ToList();
@@ -32,7 +51,25 @@ public class ProductsController : ControllerBase
         return Ok(productsWithName);
     }
 
+    /// <summary>
+    /// Searches for a product by its SKU property.
+    /// </summary>
+    /// <remarks>
+    /// This endpoint allows you to search for a product by providing its SKU (Stock Keeping Unit) property.
+    /// If a product with the specified SKU is found, it will be returned in the response.
+    /// </remarks>
+    /// <param name="sku">The SKU (Stock Keeping Unit) of the product to search for.</param>
+    /// <returns>
+    /// If a product with the specified SKU is found, it returns a 200 (OK) response with the product details in the body.
+    /// If no product is found with the specified SKU, it returns a 404 (Not Found) response.
+    /// </returns>
+    /// <response code="200">Returns the product with the specified SKU.</response>
+    /// <response code="404">If no product is found with the specified SKU.</response>
+
+    //Är det okej att döpa endpointen till vad man tycker är bäst lämpat?
     [HttpGet("{sku}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult SearchProductBySKU(string sku)
     {
         var product = context.Product.SingleOrDefault(p => p.SKU == sku);
@@ -45,14 +82,22 @@ public class ProductsController : ControllerBase
         return Ok(product);
     }
 
-    [HttpPost("Add Product")]
+    /// <summary>
+    /// Creates a new product.
+    /// </summary>
+    /// <remarks>
+    /// This endpoint allows you to create a new product by providing the necessary product details.
+    /// </remarks>
+    /// <param name="product">The product object to create.</param>
+    /// <returns>
+    /// If the product is successfully created, it returns a 201 Created response with the created product.
+    /// If the creation fails, it returns a 400 Bad Request response with an error message.
+    /// </returns>
+    /// <response code="201">Returns the newly created product.</response>
+    /// <response code="400">If the creation of the product fails.</response>
+    [HttpPost]
     public IActionResult AddProduct(Product product)
     {
-        if (product == null)
-        {
-            return BadRequest("Invalid product data. Product cannot be null.");
-        }
-
         context.Product.Add(product);
 
         try
@@ -61,14 +106,26 @@ public class ProductsController : ControllerBase
         }
         catch (Exception)
         {
-            // If an exception occurs during save, return a 400 Bad Request response
             return BadRequest("Failed to create the product.");
         }
 
         return Created("", product);
     }
 
-    [HttpDelete("Delete")]
+    /// <summary>
+    /// Deletes a product by SKU.
+    /// </summary>
+    /// <remarks>
+    /// This endpoint allows you to delete a product by providing its SKU (Stock Keeping Unit).
+    /// </remarks>
+    /// <param name="sku">The SKU of the product to delete.</param>
+    /// <returns>
+    /// If the product is successfully deleted, it returns a 204 No Content response.
+    /// If no product with the specified SKU is found, it returns a 404 Not Found response.
+    /// </returns>
+    /// <response code="204">Product successfully deleted.</response>
+    /// <response code="404">If no product with the specified SKU is found.</response>
+    [HttpDelete("{sku}")]
     public IActionResult DeleteProduct(string sku)
     {
         var product = context.Product.SingleOrDefault(p => p.SKU == sku);
@@ -84,7 +141,22 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("Update")]
+    /// <summary>
+    /// Updates a product by SKU.
+    /// </summary>
+    /// <remarks>
+    /// This endpoint allows you to update a product by providing its SKU (Stock Keeping Unit)
+    /// and a new set of product information.
+    /// </remarks>
+    /// <param name="sku">The SKU of the product to update.</param>
+    /// <param name="updatedProduct">The updated product information.</param>
+    /// <returns>
+    /// If the product is successfully updated, it returns a 200 OK response with the updated product.
+    /// If no product with the specified SKU is found, it returns a 404 Not Found response.
+    /// </returns>
+    /// <response code="200">Product successfully updated.</response>
+    /// <response code="404">If no product with the specified SKU is found.</response>
+    [HttpPut("{sku}")]
     public IActionResult UpdateProduct(string sku, Product updatedProduct)
     {
         var product = context.Product.SingleOrDefault(p => p.SKU == sku);
