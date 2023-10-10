@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ProductManager.Entities;
+namespace ProductManager.Data.Entities;
 public class Category
 {
     public int Id { get; set; }

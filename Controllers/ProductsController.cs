@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProductManager.Data;
-using ProductManager.Entities;
+using ProductManager.Data.Entities;
 
 namespace ProductManager.Controllers;
 

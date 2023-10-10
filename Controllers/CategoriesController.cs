@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProductManager.Data;
-using ProductManager.Entities;
+using ProductManager.Data.Entities;
 using System.Collections.Generic;
 using System.Linq;
 
