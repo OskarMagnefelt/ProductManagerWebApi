@@ -23,7 +23,7 @@ namespace ProductManager.Controllers
             {
                 var categoriesWithProducts = context.Category
                     .Include(c => c.Products) // Include the related products
-                    .Select(c => new CategoryWithProductsDto
+                    .Select(c => new ProductCategoriesDto
                     {
                         CategoryId = c.Id,
                         CategoryName = c.Name,
@@ -47,7 +47,7 @@ namespace ProductManager.Controllers
 
 
         [HttpPost("add")]
-        public IActionResult AddProductToCategory([FromBody] AddProductToCategoryRequest request)
+        public IActionResult AddProductToCategory([FromBody] AddProductToCategoryRequestDTO request)
         {
             var category = context.Category.Find(request.CategoryId);
 
