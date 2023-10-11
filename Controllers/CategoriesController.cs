@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using product_manager_webapi.DTOs.CategoryDtos;
 using ProductManager.Data;
 using ProductManager.Data.Entities;
 using System.Collections.Generic;
@@ -19,36 +20,38 @@ namespace ProductManager.Controllers
         }
 
         /// <summary>
-        /// Retrieves a list of all product categories.
+        /// Retrieves a list of all categories.
         /// </summary>
         /// <remarks>
-        /// This endpoint allows you to retrieve a list of all available product categories.
+        /// This endpoint allows you to retrieve a list of all categories available in the system.
         /// </remarks>
-        /// <returns>
-        /// A 200 OK response containing a list of product categories.
-        /// If there are no categories found, an empty list is returned.
-        /// </returns>
-        /// <response code="200">List of product categories retrieved successfully.</response>
-        /// <response code="204">No product categories found (empty response).</response>
+        /// <returns>An IEnumerable of categories.</returns>
         [HttpGet]
-        public IActionResult GetCategories()
+        public IEnumerable<CategoryNameDto> GetCategories()
         {
             var categories = context.Category.ToList();
-            return Ok(categories);
+
+            IEnumerable<CategoryNameDto> categoriesNamesDto = categories.Select(x => new CategoryNameDto
+            {
+                Name = x.Name,
+            });
+
+            // return Ok(categoriesDto);
+            return categoriesNamesDto;
         }
 
         /// <summary>
-        /// Retrieves a product category by its unique identifier.
+        /// Retrieves a category by its ID.
         /// </summary>
-        /// <param name="id">The unique identifier of the product category.</param>
+        /// <param name="id">The unique ID of the category.</param>
         /// <returns>
-        /// A 200 OK response containing the product category with the specified identifier.
-        /// If no category is found with the given identifier, a 404 Not Found response is returned.
+        /// A 200 OK response containing the category with the ID.
+        /// If no category is found with the given ID, a 404 Not Found response is returned.
         /// </returns>
-        /// <response code="200">Product category retrieved successfully.</response>
-        /// <response code="404">Product category with the specified ID not found.</response>
+        /// <response code="200">Category retrieved successfully.</response>
+        /// <response code="404">Category with the specified ID not found.</response>
         [HttpGet("{id}")]
-        public IActionResult GetCategory(int id)
+        public ActionResult<CategoryDto> GetCategoryById(int id)
         {
             var category = context.Category.Find(id);
 
@@ -57,7 +60,13 @@ namespace ProductManager.Controllers
                 return NotFound();
             }
 
-            return Ok(category);
+            var categoryDto = new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name
+            };
+
+            return Ok(categoryDto);
         }
 
         /// <summary>
@@ -70,12 +79,37 @@ namespace ProductManager.Controllers
         /// </returns>
         /// <response code="201">Product category created successfully.</response>
         /// <response code="400">Bad request. Failed to create the product category.</response>
-        [HttpPost("/{id}/products")]
-        public IActionResult AddCategory(Category category)
+        [HttpPost]
+        public ActionResult<CategoryDto> AddCategory(AddCategoryRequestDto request)
         {
+            var category = new Category
+            {
+                Id = request.Id,
+                Name = request.Name
+            };
             context.Category.Add(category);
-            context.SaveChanges();
-            return Created("", category);
+
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return BadRequest("Failed to create the product.");
+            }
+
+            var categoryDto = new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name
+            };
+
+            // return Created("", categoryDto);
+
+            return CreatedAtAction( // 201 Created
+                nameof(GetCategoryById),
+                new { id = category.Id },
+                categoryDto);
         }
 
 

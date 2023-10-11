@@ -3,7 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ProductManager.Data.Entities;
 
+#pragma warning disable CS1591
+
 [Index(nameof(SKU), IsUnique = true)]
+
 public class Product
 {
     public int Id { get; set; }
@@ -29,3 +32,4 @@ public class Product
 
     public ICollection<Category> Categories { get; set; } = new List<Category>();
 }
+#pragma warning restore CS1591

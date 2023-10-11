@@ -30,17 +30,17 @@ namespace ProductManager.Controllers
         /// <response code="200">List of product categories and associated products retrieved successfully.</response>
         /// <response code="500">If an error occurs while processing the request.</response>
         [HttpGet]
-        public ActionResult<IEnumerable<ProductCategoriesDto>> GetProductCategories()
+        public ActionResult<IEnumerable<GetProductCategoriesDto>> GetProductCategories()
         {
             try
             {
                 var categoriesWithProducts = context.Category
                     .Include(c => c.Products) // Include the related products
-                    .Select(c => new ProductCategoriesDto
+                    .Select(c => new GetProductCategoriesDto
                     {
                         CategoryId = c.Id,
                         CategoryName = c.Name,
-                        Products = c.Products.Select(p => new ProductDto
+                        Products = c.Products.Select(p => new GetProductInCategoryDto
                         {
                             ProductId = p.Id,
                             ProductName = p.Name

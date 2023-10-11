@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using product_manager_webapi.DTOs.ProductDtos;
 using ProductManager.Data;
 using ProductManager.Data.Entities;
 
@@ -16,11 +17,20 @@ public class ProductsController : ControllerBase
     /// </remarks>
     /// <returns>An IEnumerable of products.</returns>
     [HttpGet]
-    public IEnumerable<Product> GetProducts()
+    public IEnumerable<ProductDto> GetProducts()
     {
         var products = context.Product.ToList();
 
-        return products;
+        IEnumerable<ProductDto> productsDto = products.Select(x => new ProductDto
+        {
+            Name = x.Name,
+            SKU = x.SKU,
+            Description = x.Description,
+            Image = x.Image,
+            Price = x.Price
+        });
+
+        return productsDto;
     }
 
     /// <summary>
@@ -36,8 +46,8 @@ public class ProductsController : ControllerBase
     /// </returns>
     /// <response code="200">Returns a list of products with the specified name.</response>
     /// <response code="404">If no products are found with the specified name.</response>
-    [HttpGet("search")]
-    public IActionResult GetProductsByName([FromQuery] string name)
+    [HttpGet("name")]
+    public ActionResult<ProductDto> GetProductsByName([FromQuery] string? name)
     {
         var productsWithName = context.Product
             .Where(p => p.Name == name)
@@ -48,7 +58,16 @@ public class ProductsController : ControllerBase
             return NotFound("Inga produkter utav detta namn hittades.");
         }
 
-        return Ok(productsWithName);
+        IEnumerable<ProductDto> productsWithNameDto = productsWithName.Select(x => new ProductDto
+        {
+            Name = x.Name,
+            SKU = x.SKU,
+            Description = x.Description,
+            Image = x.Image,
+            Price = x.Price
+        });
+
+        return Ok(productsWithNameDto);
     }
 
     /// <summary>
@@ -66,20 +85,29 @@ public class ProductsController : ControllerBase
     /// <response code="200">Returns the product with the specified SKU.</response>
     /// <response code="404">If no product is found with the specified SKU.</response>
 
-    //Är det okej att döpa endpointen till vad man tycker är bäst lämpat?
     [HttpGet("{sku}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult SearchProductBySKU(string sku)
+    public ActionResult<ProductDto> SearchProductBySKU(string sku)
     {
-        var product = context.Product.SingleOrDefault(p => p.SKU == sku);
+        var product = context.Product.FirstOrDefault(p => p.SKU == sku);
 
         if (product == null)
         {
             return NotFound();
         }
 
-        return Ok(product);
+        var productDto = new ProductDto
+        {
+            Name = product.Name,
+            SKU = product.SKU,
+            Description = product.Description,
+            Image = product.Image,
+            Price = product.Price
+        };
+
+        // return Ok(productDto);
+        return productDto;
     }
 
     /// <summary>
@@ -96,8 +124,17 @@ public class ProductsController : ControllerBase
     /// <response code="201">Returns the newly created product.</response>
     /// <response code="400">If the creation of the product fails.</response>
     [HttpPost]
-    public IActionResult AddProduct(Product product)
+    public ActionResult<ProductDto> AddProduct(AddProductRequestDto request)
     {
+        var product = new Product
+        {
+            Name = request.Name,
+            SKU = request.SKU,
+            Description = request.Description,
+            Image = request.Image,
+            Price = request.Price
+        };
+
         context.Product.Add(product);
 
         try
@@ -109,7 +146,21 @@ public class ProductsController : ControllerBase
             return BadRequest("Failed to create the product.");
         }
 
-        return Created("", product);
+        var productDto = new ProductDto
+        {
+            Name = product.Name,
+            SKU = product.SKU,
+            Description = product.Description,
+            Image = product.Image,
+            Price = product.Price
+        };
+
+        // return Created("", productDto);
+
+        return CreatedAtAction( // 201 Created
+            nameof(GetProductsByName),
+            new { name = product.Name },
+            productDto);
     }
 
     /// <summary>
@@ -125,6 +176,9 @@ public class ProductsController : ControllerBase
     /// </returns>
     /// <response code="204">Product successfully deleted.</response>
     /// <response code="404">If no product with the specified SKU is found.</response>
+
+
+    // Behöver fixa DTO?
     [HttpDelete("{sku}")]
     public IActionResult DeleteProduct(string sku)
     {
@@ -156,6 +210,8 @@ public class ProductsController : ControllerBase
     /// </returns>
     /// <response code="200">Product successfully updated.</response>
     /// <response code="404">If no product with the specified SKU is found.</response>
+
+    // Behöver fixa DTO
     [HttpPut("{sku}")]
     public IActionResult UpdateProduct(string sku, Product updatedProduct)
     {
