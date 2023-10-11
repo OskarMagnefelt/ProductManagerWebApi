@@ -84,7 +84,6 @@ public class ProductsController : ControllerBase
     /// </returns>
     /// <response code="200">Returns the product with the specified SKU.</response>
     /// <response code="404">If no product is found with the specified SKU.</response>
-
     [HttpGet("{sku}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -203,33 +202,39 @@ public class ProductsController : ControllerBase
     /// and a new set of product information.
     /// </remarks>
     /// <param name="sku">The SKU of the product to update.</param>
-    /// <param name="updatedProduct">The updated product information.</param>
+    /// <param name="updateProductRequest">The updated product information.</param>
     /// <returns>
-    /// If the product is successfully updated, it returns a 200 OK response with the updated product.
+    /// If the product is successfully updated, it returns a 204 No Content response with the updated product.
     /// If no product with the specified SKU is found, it returns a 404 Not Found response.
     /// </returns>
-    /// <response code="200">Product successfully updated.</response>
+    /// <response code="204">Product successfully updated.</response>
     /// <response code="404">If no product with the specified SKU is found.</response>
 
     // Behöver fixa DTO
     [HttpPut("{sku}")]
-    public IActionResult UpdateProduct(string sku, Product updatedProduct)
+    public ActionResult<ProductDto> UpdateProduct(string sku, UpdateProductRequestDto updateProductRequest)
     {
-        var product = context.Product.SingleOrDefault(p => p.SKU == sku);
+        if (sku != updateProductRequest.SKU)
+        {
+            return BadRequest("SKU does not match"); // 400
+        }
+
+        var product = context.Product.FirstOrDefault(p => p.SKU == sku);
 
         if (product == null)
         {
-            return NotFound();
+            return NotFound(); // 404
         }
 
-        product.Name = updatedProduct.Name;
-        product.Description = updatedProduct.Description;
-        product.Image = updatedProduct.Image;
-        product.Price = updatedProduct.Price;
+        product.Name = updateProductRequest.Name;
+        // updateProductRequest.SKU = product.SKU;
+        product.Description = updateProductRequest.Description;
+        product.Image = updateProductRequest.Image;
+        product.Price = updateProductRequest.Price;
 
         context.SaveChanges();
 
-        return Ok(product);
+        return NoContent();
     }
 
     private readonly ApplicationDbContext context;
