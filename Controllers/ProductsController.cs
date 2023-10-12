@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using product_manager_webapi.DTOs.ProductDtos;
 using ProductManager.Data;
@@ -6,6 +7,7 @@ using ProductManager.Data.Entities;
 namespace ProductManager.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class ProductsController : ControllerBase
 {
@@ -175,9 +177,6 @@ public class ProductsController : ControllerBase
     /// </returns>
     /// <response code="204">Product successfully deleted.</response>
     /// <response code="404">If no product with the specified SKU is found.</response>
-
-
-    // Behöver fixa DTO?
     [HttpDelete("{sku}")]
     public IActionResult DeleteProduct(string sku)
     {
@@ -209,8 +208,6 @@ public class ProductsController : ControllerBase
     /// </returns>
     /// <response code="204">Product successfully updated.</response>
     /// <response code="404">If no product with the specified SKU is found.</response>
-
-    // Behöver fixa DTO
     [HttpPut("{sku}")]
     public ActionResult<ProductDto> UpdateProduct(string sku, UpdateProductRequestDto updateProductRequest)
     {

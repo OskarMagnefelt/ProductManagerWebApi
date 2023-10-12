@@ -7,6 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors();
 
+builder.Services.AddAuthentication()
+.AddJwtBearer();
+
+
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>
     (options => options.UseSqlServer(
