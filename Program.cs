@@ -5,7 +5,15 @@ using ProductManager.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowOrigin", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000") // Replace with your React app's origin
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddAuthentication()
 .AddJwtBearer();
@@ -58,7 +66,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.UseCors(builder => builder.AllowAnyOrigin());
+app.UseCors("AllowOrigin");
 
 app.MapControllers();
 
