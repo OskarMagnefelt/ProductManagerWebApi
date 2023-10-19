@@ -234,6 +234,50 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Retrieves product information by its SKU.
+    /// </summary>
+    /// <remarks>
+    /// This endpoint allows you to retrieve detailed information about a product by providing its SKU.
+    /// </remarks>
+    /// <param name="id">The SKU of the product to retrieve information for.</param>
+    /// <returns>
+    /// If a product with the specified SKU is found, it returns a 200 (OK) response with the product details in the body.
+    /// If no product is found with the specified SKU, it returns a 404 (Not Found) response.
+    /// </returns>
+    /// <response code="200">Returns the product information with the specified SKU.</response>
+    /// <response code="404">If no product with the specified SKU is found.</response>
+    [HttpGet("api/products/{sku}")]
+    public ActionResult<ProductInfoDto> GetProductInfo(string sku)
+    {
+        try
+        {
+            // Retrieve the product by its ID
+            var product = context.Product
+                .Where(p => p.SKU == sku)
+                .Select(p => new ProductInfoDto
+                {
+                    Id = p.Id,
+                    SKU = p.SKU,
+                    Name = p.Name
+                })
+                .FirstOrDefault();
+
+            if (product == null)
+            {
+                return NotFound(); // Product not found
+            }
+
+            return Ok(product);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+
     private readonly ApplicationDbContext context;
 
     public ProductsController(ApplicationDbContext context)

@@ -57,6 +57,8 @@ namespace ProductManager.Controllers
             }
         }
 
+
+
         /// <summary>
         /// Associates a product with a category.
         /// </summary>
