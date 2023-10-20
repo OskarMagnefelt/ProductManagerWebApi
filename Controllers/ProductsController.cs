@@ -125,7 +125,7 @@ public class ProductsController : ControllerBase
     /// <response code="201">Returns the newly created product.</response>
     /// <response code="400">If the creation of the product fails.</response>
     [HttpPost]
-    public ActionResult<ProductDto> AddProduct(AddProductRequestDto request)
+    public ActionResult<ProductDto> AddProduct(ProductDto request)
     {
         var product = new Product
         {
@@ -209,7 +209,7 @@ public class ProductsController : ControllerBase
     /// <response code="204">Product successfully updated.</response>
     /// <response code="404">If no product with the specified SKU is found.</response>
     [HttpPut("{sku}")]
-    public ActionResult<ProductDto> UpdateProduct(string sku, UpdateProductRequestDto updateProductRequest)
+    public ActionResult<ProductDto> UpdateProduct(string sku, ProductDto updateProductRequest)
     {
         if (sku != updateProductRequest.SKU)
         {

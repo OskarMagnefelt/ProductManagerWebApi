@@ -43,7 +43,8 @@ namespace ProductManager.Controllers
                         Products = c.Products.Select(p => new GetProductInCategoryDto
                         {
                             ProductId = p.Id,
-                            ProductName = p.Name
+                            ProductName = p.Name,
+                            ProductPrice = p.Price,
                         }).ToList()
                     })
                     .ToList();
