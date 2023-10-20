@@ -12,8 +12,12 @@ builder.Services.AddCors(options =>
         builder.WithOrigins("http://localhost:3000") // Replace with your React app's origin
                .AllowAnyHeader()
                .AllowAnyMethod();
+
+        // Log requests that match this policy
+        builder.WithExposedHeaders("Access-Control-Allow-Origin");
     });
 });
+
 
 builder.Services.AddAuthentication()
 .AddJwtBearer();
@@ -62,12 +66,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.UseCors("AllowOrigin");
-
+app.UseHttpsRedirection();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

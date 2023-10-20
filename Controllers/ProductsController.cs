@@ -252,7 +252,7 @@ public class ProductsController : ControllerBase
     {
         try
         {
-            // Retrieve the product by its ID
+            // Retrieve the product by its SKU
             var product = context.Product
                 .Where(p => p.SKU == sku)
                 .Select(p => new ProductInfoDto

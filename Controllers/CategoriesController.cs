@@ -27,17 +27,18 @@ namespace ProductManager.Controllers
         /// </remarks>
         /// <returns>An IEnumerable of categories.</returns>
         [HttpGet]
-        public IEnumerable<CategoryNameDto> GetCategories()
+        public IEnumerable<CategoryDto> GetCategories()
         {
             var categories = context.Category.ToList();
 
-            IEnumerable<CategoryNameDto> categoriesNamesDto = categories.Select(x => new CategoryNameDto
+            IEnumerable<CategoryDto> categoriesDto = categories.Select(x => new CategoryDto
             {
                 Name = x.Name,
+                Id = x.Id
             });
 
             // return Ok(categoriesDto);
-            return categoriesNamesDto;
+            return categoriesDto;
         }
 
         /// <summary>

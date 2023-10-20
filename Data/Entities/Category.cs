@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProductManager.Data.Entities;
 
 #pragma warning disable CS1591
+
+[Index(nameof(Name), IsUnique = true)]
 public class Category
 {
     public int Id { get; set; }
