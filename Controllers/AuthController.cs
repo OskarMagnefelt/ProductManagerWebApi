@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using product_manager_webapi.Data.Entities;
 using product_manager_webapi.DTOs.Auth;
 using ProductManager.Data;
 
@@ -35,20 +37,27 @@ namespace product_manager_webapi.Controllers
                 return Unauthorized();
             }
 
-            var tokenDto = GenerateToken();
+            var tokenDto = GenerateToken(user);
 
             return tokenDto;
         }
 
-        private TokenDto GenerateToken()
+        private TokenDto GenerateToken(User user)
         {
             var signingKey = Convert.FromBase64String("tKE+pMd2rQAHBbOjXWTZqacLJRLqlrnTzZdmKRJEXLjtiGOnFY3w+vuUxPSgLdMFbbVXxPrFWNUd/yQyG5PsEg==");
+
+            var claims = new List<Claim>()
+            {
+                new(ClaimTypes.GivenName, user.FirstName),
+                new(ClaimTypes.Surname, user.LastName)
+            };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(signingKey),
-                SecurityAlgorithms.HmacSha256Signature)
+                SecurityAlgorithms.HmacSha256Signature),
+                Subject = new ClaimsIdentity(claims)
             };
 
             var jwtTokenHandler = new JwtSecurityTokenHandler();
