@@ -7,7 +7,7 @@ using ProductManager.Data.Entities;
 namespace ProductManager.Controllers;
 
 [ApiController]
-// [Authorize]
+[Authorize]
 [Route("[controller]")]
 public class ProductsController : ControllerBase
 {

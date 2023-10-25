@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProductManager.Data;
@@ -6,6 +7,7 @@ using static System.Console;
 namespace ProductManager.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class ProductCategoriesController : ControllerBase
     {

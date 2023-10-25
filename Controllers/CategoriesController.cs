@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using product_manager_webapi.DTOs.CategoryDtos;
@@ -9,6 +10,7 @@ using System.Linq;
 namespace ProductManager.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class CategoriesController : ControllerBase
     {

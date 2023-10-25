@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using product_manager_webapi.Data.Entities;
 using product_manager_webapi.DTOs.Auth;
@@ -45,6 +40,7 @@ namespace product_manager_webapi.Controllers
         private TokenDto GenerateToken(User user)
         {
             var signingKey = Convert.FromBase64String("tKE+pMd2rQAHBbOjXWTZqacLJRLqlrnTzZdmKRJEXLjtiGOnFY3w+vuUxPSgLdMFbbVXxPrFWNUd/yQyG5PsEg==");
+            // var signingKey = Convert.FromBase64String(config["JWT:SigningSecret"]);
 
             var claims = new List<Claim>()
             {

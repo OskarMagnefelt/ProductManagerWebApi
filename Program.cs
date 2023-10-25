@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductManager.Data;
 
@@ -20,7 +21,20 @@ builder.Services.AddCors(options =>
 
 
 builder.Services.AddAuthentication()
-.AddJwtBearer();
+.AddJwtBearer(options =>
+    {
+        // Här används signeringsnyckeln för att verifiera att token inte har 
+        // manipulerats på vägen (av klienten, eller av någon annan som vill attackera/utnyttja)
+        // API:et
+        var signingKey = Convert.FromBase64String("tKE+pMd2rQAHBbOjXWTZqacLJRLqlrnTzZdmKRJEXLjtiGOnFY3w+vuUxPSgLdMFbbVXxPrFWNUd/yQyG5PsEg==");
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            IssuerSigningKey = new SymmetricSecurityKey(signingKey)
+        };
+    });
 
 
 // Add services to the container.
