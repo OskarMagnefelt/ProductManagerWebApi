@@ -48,6 +48,15 @@ namespace product_manager_webapi.Controllers
                 new(ClaimTypes.Surname, user.LastName)
             };
 
+            // Detta gör så att EF Core laddar alla associerade roller för användnaren
+
+            context.Entry(user).Collection(b => b.Roles).Load();
+
+            foreach (var role in user.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.Name));
+            }
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 SigningCredentials = new SigningCredentials(
