@@ -84,6 +84,8 @@ namespace ProductManager.Controllers
         /// <response code="400">Bad request. Failed to create the product category.</response>
         [HttpPost]
         [Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(CategoryDto), 201)] // Specifies the expected response type and status code 201
+        [ProducesResponseType(400)] // Specifies status code 400 without a response type
         public ActionResult<CategoryDto> AddCategory(CategoryDto request)
         {
             var category = new Category

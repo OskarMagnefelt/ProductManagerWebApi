@@ -63,23 +63,22 @@ namespace ProductManager.Controllers
 
 
         /// <summary>
-        /// Associates a product with a category.
+        /// Add a product to a category.
         /// </summary>
         /// <remarks>
-        /// This endpoint allows you to associate a product with a specific category.
+        /// This endpoint allows you to add a product to a category.
         /// </remarks>
         /// <param name="request">The request containing the CategoryId and ProductId to associate.</param>
         /// <returns>
         /// A 201 Created response indicating that the product has been successfully associated with the category.
-        /// If the category or product is not found, a 404 Not Found response is returned.
-        /// If the product is already associated with the category, a 409 Conflict response is returned.
+        /// If not successful, a 400 Bad Request response is returned.s
         /// </returns>
         /// <response code="201">Product associated with the category successfully.</response>
         /// <response code="400">If the request is invalid or malformed.</response>
-        /// <response code="404">If the category or product is not found.</response>
-        /// <response code="409">If the product is already associated with the category.</response>
         [HttpPost("add")]
         [Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(AddProductToCategoryDTO), 201)] // Specifies the expected response type and status code 201
+        [ProducesResponseType(400)] // Specifies status code 400 without a response type
         public IActionResult AddProductToCategory([FromBody] AddProductToCategoryDTO request)
         {
             var category = context.Category.Find(request.CategoryId);

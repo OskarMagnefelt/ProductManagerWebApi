@@ -157,9 +157,7 @@ public class ProductsController : ControllerBase
             Price = product.Price
         };
 
-        // return Created("", productDto);
-
-        return CreatedAtAction( // 201 Created
+        return CreatedAtAction(
             nameof(GetProductsByName),
             new { name = product.Name },
             productDto);
@@ -205,11 +203,16 @@ public class ProductsController : ControllerBase
     /// <param name="updateProductRequest">The updated product information.</param>
     /// <returns>
     /// If the product is successfully updated, it returns a 204 No Content response with the updated product.
-    /// If no product with the specified SKU is found, it returns a 404 Not Found response.
+    /// If no product with the specified SKU is found, it returns a 400 Bad Request response.
+    /// If product does not exist, it returns a 404 Not Found response.
     /// </returns>
+    /// <response code="400">If no product with the specified SKU is found.</response>
+    /// <response code="404">If no product is found.</response>
     /// <response code="204">Product successfully updated.</response>
-    /// <response code="404">If no product with the specified SKU is found.</response>
     [HttpPut("{sku}")]
+    [ProducesResponseType(typeof(ProductDto), 204)] // Specifies the expected response type and status code 201
+    [ProducesResponseType(400)] // Specifies status code 401 without a response type
+    [ProducesResponseType(404)] // Specifies status code 401 without a response type
     public ActionResult<ProductDto> UpdateProduct(string sku, ProductDto updateProductRequest)
     {
         if (sku != updateProductRequest.SKU)
@@ -225,14 +228,13 @@ public class ProductsController : ControllerBase
         }
 
         product.Name = updateProductRequest.Name;
-        // updateProductRequest.SKU = product.SKU;
         product.Description = updateProductRequest.Description;
         product.Image = updateProductRequest.Image;
         product.Price = updateProductRequest.Price;
 
         context.SaveChanges();
 
-        return NoContent();
+        return NoContent(); // 204
     }
 
     /// <summary>

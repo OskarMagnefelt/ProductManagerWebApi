@@ -21,6 +21,9 @@ namespace product_manager_webapi.Controllers
         }
 
         [HttpPost]
+        // [ProducesResponseType(typeof(User), 201)] // Specifies the expected response type and status code 201
+        [ProducesResponseType(200)] // Specifies status code 401 without a response type
+        [ProducesResponseType(401)] // Specifies status code 401 without a response type
         public ActionResult<TokenDto> Authenticate(AuthenticateRequestDto authenticateRequest)
         {
             var user = context
