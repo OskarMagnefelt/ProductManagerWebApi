@@ -125,6 +125,7 @@ public class ProductsController : ControllerBase
     /// <response code="201">Returns the newly created product.</response>
     /// <response code="400">If the creation of the product fails.</response>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public ActionResult<ProductDto> AddProduct(ProductDto request)
     {
         var product = new Product

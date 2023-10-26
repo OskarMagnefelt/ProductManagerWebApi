@@ -79,6 +79,7 @@ namespace ProductManager.Controllers
         /// <response code="404">If the category or product is not found.</response>
         /// <response code="409">If the product is already associated with the category.</response>
         [HttpPost("add")]
+        [Authorize(Roles = "Admin")]
         public IActionResult AddProductToCategory([FromBody] AddProductToCategoryDTO request)
         {
             var category = context.Category.Find(request.CategoryId);

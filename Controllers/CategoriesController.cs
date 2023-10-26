@@ -83,6 +83,7 @@ namespace ProductManager.Controllers
         /// <response code="201">Product category created successfully.</response>
         /// <response code="400">Bad request. Failed to create the product category.</response>
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult<CategoryDto> AddCategory(CategoryDto request)
         {
             var category = new Category

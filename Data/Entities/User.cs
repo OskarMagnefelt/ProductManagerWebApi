@@ -23,5 +23,7 @@ namespace product_manager_webapi.Data.Entities
 
         [MaxLength(50)]
         public string LastName { get; set; }
+
+        public ICollection<Role> Roles { get; set; } = new List<Role>();
     }
 }
