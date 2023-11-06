@@ -75,7 +75,7 @@ namespace ProductManager.Controllers
         /// </returns>
         /// <response code="201">Product associated with the category successfully.</response>
         /// <response code="400">If the request is invalid or malformed.</response>
-        [HttpPost("add")]
+        [HttpPost()]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(AddProductToCategoryDTO), 201)] // Specifies the expected response type and status code 201
         [ProducesResponseType(400)] // Specifies status code 400 without a response type

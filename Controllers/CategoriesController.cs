@@ -6,6 +6,7 @@ using ProductManager.Data;
 using ProductManager.Data.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Console;
 
 namespace ProductManager.Controllers
 {
@@ -119,40 +120,42 @@ namespace ProductManager.Controllers
         }
 
 
-        // Dessa grejer kanske jag implementerar för frontend senare
+        [HttpPost("{id}/products")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(AddProductToCategoryDTO), 201)] // Specifies the expected response type and status code 201
+        [ProducesResponseType(400)] // Specifies status code 400 without a response type
+        public IActionResult AddProductToCategory([FromBody] AddProductToCategoryDTO request)
+        {
+            var category = context.Category.Find(request.CategoryId);
 
-        // [HttpPut("{id}")]
-        // public IActionResult UpdateCategory(int id, Category updatedCategory)
-        // {
-        //     var category = context.Category.Find(id);
+            if (category == null)
+            {
+                Console.WriteLine($"Category with ID {request.CategoryId} not found.");
+                return NotFound("Category not found.");
+            }
 
-        //     if (category == null)
-        //     {
-        //         return NotFound();
-        //     }
+            var product = context.Product.Find(request.ProductId);
 
-        //     // Update the properties of the existing category with the new values
-        //     category.Name = updatedCategory.Name;
+            if (product == null)
+            {
+                return NotFound("Product not found.");
+            }
 
-        //     context.SaveChanges();
+            try
+            {
+                context.Product.Attach(product);
 
-        //     return Ok(category);
-        // }
+                product.Categories.Add(category);
 
-        // [HttpDelete("{id}")]
-        // public IActionResult DeleteCategory(int id)
-        // {
-        //     var category = context.Category.Find(id);
+                context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                WriteLine("Produkt redan tillagd");
+                return Conflict("Produkt redan tillagd");
+            }
 
-        //     if (category == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     context.Category.Remove(category);
-        //     context.SaveChanges();
-
-        //     return NoContent();
-        // }
+            return Created("", null);
+        }
     }
 }

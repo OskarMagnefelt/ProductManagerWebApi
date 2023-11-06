@@ -125,6 +125,8 @@ public class ProductsController : ControllerBase
     /// <response code="201">Returns the newly created product.</response>
     /// <response code="400">If the creation of the product fails.</response>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Authorize(Roles = "Admin")]
     public ActionResult<ProductDto> AddProduct(ProductDto request)
     {
@@ -177,6 +179,9 @@ public class ProductsController : ControllerBase
     /// <response code="204">Product successfully deleted.</response>
     /// <response code="404">If no product with the specified SKU is found.</response>
     [HttpDelete("{sku}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize(Roles = "Admin")]
     public IActionResult DeleteProduct(string sku)
     {
         var product = context.Product.SingleOrDefault(p => p.SKU == sku);
@@ -210,9 +215,11 @@ public class ProductsController : ControllerBase
     /// <response code="404">If no product is found.</response>
     /// <response code="204">Product successfully updated.</response>
     [HttpPut("{sku}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ProductDto), 204)] // Specifies the expected response type and status code 201
-    [ProducesResponseType(400)] // Specifies status code 401 without a response type
-    [ProducesResponseType(404)] // Specifies status code 401 without a response type
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public ActionResult<ProductDto> UpdateProduct(string sku, ProductDto updateProductRequest)
     {
         if (sku != updateProductRequest.SKU)
@@ -250,7 +257,9 @@ public class ProductsController : ControllerBase
     /// </returns>
     /// <response code="200">Returns the product information with the specified SKU.</response>
     /// <response code="404">If no product with the specified SKU is found.</response>
-    [HttpGet("api/products/{sku}")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [HttpGet("getinfo/{sku}")]
     public ActionResult<ProductInfoDto> GetProductInfo(string sku)
     {
         try
