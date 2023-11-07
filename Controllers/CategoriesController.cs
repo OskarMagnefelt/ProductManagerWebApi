@@ -125,7 +125,19 @@ namespace ProductManager.Controllers
                 categoryDto);
         }
 
-
+        /// <summary>
+        /// Add a product to a category.
+        /// </summary>
+        /// <remarks>
+        /// This endpoint allows you to add a product to category.
+        /// </remarks>
+        /// <param name="id">The id of the product to add.</param>
+        /// <returns>
+        /// If the product is successfully added, it returns a 201 created response.
+        /// If unable to add product to category, it returns a 400 bad request response.
+        /// </returns>
+        /// <response code="201">Product successfully added to category.</response>
+        /// <response code="400">Unable to add product to category.</response>
         [HttpPost("{id}/products")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
