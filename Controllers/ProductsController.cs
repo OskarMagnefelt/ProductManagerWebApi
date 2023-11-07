@@ -73,10 +73,10 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>
-    /// Searches for a product by its SKU property.
+    /// Gets a product by its SKU property.
     /// </summary>
     /// <remarks>
-    /// This endpoint allows you to search for a product by providing its SKU (Stock Keeping Unit) property.
+    /// This endpoint allows you to get a product by providing its SKU (Stock Keeping Unit) property.
     /// If a product with the specified SKU is found, it will be returned in the response.
     /// </remarks>
     /// <param name="sku">The SKU (Stock Keeping Unit) of the product to search for.</param>
@@ -89,7 +89,7 @@ public class ProductsController : ControllerBase
     [HttpGet("{sku}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<ProductDto> SearchProductBySKU(string sku)
+    public ActionResult<ProductDto> GetProductBySKU(string sku)
     {
         var product = context.Product.FirstOrDefault(p => p.SKU == sku);
 
@@ -260,14 +260,14 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("getinfo/{sku}")]
-    public ActionResult<ProductInfoDto> GetProductInfo(string sku)
+    public ActionResult<ProductWithIdDto> GetProductInfo(string sku)
     {
         try
         {
             // Retrieve the product by its SKU
             var product = context.Product
                 .Where(p => p.SKU == sku)
-                .Select(p => new ProductInfoDto
+                .Select(p => new ProductWithIdDto
                 {
                     Id = p.Id,
                     SKU = p.SKU,

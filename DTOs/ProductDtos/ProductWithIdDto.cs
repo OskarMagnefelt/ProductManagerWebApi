@@ -5,11 +5,18 @@ using System.Threading.Tasks;
 
 namespace product_manager_webapi.DTOs.ProductDtos
 {
-    public class ProductInfoDto
+    public class ProductWithIdDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
+
         public string SKU { get; set; }
+
+        public string Description { get; set; }
+
+        public string Image { get; set; }
+
+        public decimal Price { get; set; }
     }
 }
 
