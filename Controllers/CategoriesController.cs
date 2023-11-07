@@ -30,6 +30,9 @@ namespace ProductManager.Controllers
         /// </remarks>
         /// <returns>An IEnumerable of categories.</returns>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IEnumerable<CategoryDto> GetCategories()
         {
             var categories = context.Category.ToList();
@@ -55,6 +58,9 @@ namespace ProductManager.Controllers
         /// <response code="200">Category retrieved successfully.</response>
         /// <response code="404">Category with the specified ID not found.</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public ActionResult<CategoryDto> GetCategoryById(int id)
         {
             var category = context.Category.Find(id);
@@ -85,8 +91,8 @@ namespace ProductManager.Controllers
         /// <response code="400">Bad request. Failed to create the product category.</response>
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(CategoryDto), 201)] // Specifies the expected response type and status code 201
-        [ProducesResponseType(400)] // Specifies status code 400 without a response type
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<CategoryDto> AddCategory(CategoryDto request)
         {
             var category = new Category
@@ -122,8 +128,8 @@ namespace ProductManager.Controllers
 
         [HttpPost("{id}/products")]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(AddProductToCategoryDTO), 201)] // Specifies the expected response type and status code 201
-        [ProducesResponseType(400)] // Specifies status code 400 without a response type
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult AddProductToCategory([FromBody] AddProductToCategoryDTO request)
         {
             var category = context.Category.Find(request.CategoryId);

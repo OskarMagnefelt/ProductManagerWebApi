@@ -20,10 +20,21 @@ namespace product_manager_webapi.Controllers
             this.context = context;
         }
 
+        /// <summary>
+        /// Login.
+        /// </summary>
+        /// <remarks>
+        /// This endpoints allows a user to authenticate.
+        /// </remarks>
+        /// <returns>
+        /// If the authentication is successful, returns a JWT token that can be used as bearer for authorizing.
+        /// If the authentication fails, returns a Unauthorized 401 response.
+        /// </returns>
+        /// <response code="200">Returns a JWT.</response>
+        /// <response code="401">If authentication fails.</response>
         [HttpPost]
-        // [ProducesResponseType(typeof(User), 201)] // Specifies the expected response type and status code 201
-        [ProducesResponseType(200)] // Specifies status code 401 without a response type
-        [ProducesResponseType(401)] // Specifies status code 401 without a response type
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public ActionResult<TokenDto> Authenticate(AuthenticateRequestDto authenticateRequest)
         {
             var user = context
