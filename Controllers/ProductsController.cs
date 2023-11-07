@@ -48,8 +48,8 @@ public class ProductsController : ControllerBase
     /// </returns>
     /// <response code="200">Returns a list of products with the specified name.</response>
     /// <response code="404">If no products are found with the specified name.</response>
-    [HttpGet("name")]
-    public ActionResult<ProductDto> GetProductsByName([FromQuery] string? name)
+    [HttpGet("products")] // Use "products" as the route template
+    public ActionResult<IEnumerable<ProductDto>> GetProductsByName([FromQuery] string name)
     {
         var productsWithName = context.Product
             .Where(p => p.Name == name)
@@ -57,7 +57,7 @@ public class ProductsController : ControllerBase
 
         if (productsWithName.Count == 0)
         {
-            return NotFound("Inga produkter utav detta namn hittades.");
+            return NotFound("No products with this name were found.");
         }
 
         IEnumerable<ProductDto> productsWithNameDto = productsWithName.Select(x => new ProductDto
@@ -71,6 +71,7 @@ public class ProductsController : ControllerBase
 
         return Ok(productsWithNameDto);
     }
+
 
     /// <summary>
     /// Gets a product by its SKU property.
@@ -243,52 +244,6 @@ public class ProductsController : ControllerBase
 
         return NoContent(); // 204
     }
-
-    /// <summary>
-    /// Retrieves product information by its SKU.
-    /// </summary>
-    /// <remarks>
-    /// This endpoint allows you to retrieve detailed information about a product by providing its SKU.
-    /// </remarks>
-    /// <param name="id">The SKU of the product to retrieve information for.</param>
-    /// <returns>
-    /// If a product with the specified SKU is found, it returns a 200 (OK) response with the product details in the body.
-    /// If no product is found with the specified SKU, it returns a 404 (Not Found) response.
-    /// </returns>
-    /// <response code="200">Returns the product information with the specified SKU.</response>
-    /// <response code="404">If no product with the specified SKU is found.</response>
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpGet("getinfo/{sku}")]
-    public ActionResult<ProductWithIdDto> GetProductInfo(string sku)
-    {
-        try
-        {
-            // Retrieve the product by its SKU
-            var product = context.Product
-                .Where(p => p.SKU == sku)
-                .Select(p => new ProductWithIdDto
-                {
-                    Id = p.Id,
-                    SKU = p.SKU,
-                    Name = p.Name
-                })
-                .FirstOrDefault();
-
-            if (product == null)
-            {
-                return NotFound(); // Product not found
-            }
-
-            return Ok(product);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred: {ex.Message}");
-            return StatusCode(500, "Internal Server Error");
-        }
-    }
-
 
     private readonly ApplicationDbContext context;
 

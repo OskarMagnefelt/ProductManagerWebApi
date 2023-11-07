@@ -89,12 +89,15 @@ namespace ProductManager.Controllers
                 return NotFound("Category not found.");
             }
 
-            var product = context.Product.Find(request.ProductId);
+            var product = context.Product
+                .Where(p => p.SKU == request.ProductSKU)
+                .FirstOrDefault();
 
             if (product == null)
             {
                 return NotFound("Product not found.");
             }
+
 
             try
             {

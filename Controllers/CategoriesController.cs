@@ -152,7 +152,7 @@ namespace ProductManager.Controllers
                 return NotFound("Category not found.");
             }
 
-            var product = context.Product.Find(request.ProductId);
+            var product = context.Product.Find(request.ProductSKU);
 
             if (product == null)
             {
