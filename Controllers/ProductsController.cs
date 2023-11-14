@@ -48,8 +48,8 @@ public class ProductsController : ControllerBase
     /// </returns>
     /// <response code="200">Returns a list of products with the specified name.</response>
     /// <response code="404">If no products are found with the specified name.</response>
-    [HttpGet("products")] // Use "products" as the route template
-    public ActionResult<IEnumerable<ProductDto>> GetProductsByName([FromQuery] string name)
+    [HttpGet("name")] // Use "products" as the route template
+    public ActionResult<IEnumerable<ProductDto>> GetProductsByName([FromQuery] string? name)
     {
         var productsWithName = context.Product
             .Where(p => p.Name == name)
